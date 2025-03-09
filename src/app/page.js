@@ -163,7 +163,7 @@ export default function CreativeHubPage() {
         alert(
           "Booking berhasil! Informasi persetujuan akan dikirim via email."
         );
-        window.location.reload();
+        window.location.href = "https://wa.me/6288238644750?text=Saya%20sudah%20mengisi%20form%20booking%20ruangan.";
       }
     } catch (error) {
       console.error("Error submitting booking:", error);
