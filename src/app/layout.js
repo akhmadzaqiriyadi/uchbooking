@@ -15,7 +15,7 @@ export const metadata = {
   title: "UCH UTY Creative Hub",
   description: "Creativity l Innovation l Technology",
   icons: {
-    icon: "/fav.ico", // atau "/favicon.png"
+    icon: "/fav.ico",
   },
 };
 

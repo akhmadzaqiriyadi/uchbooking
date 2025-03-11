@@ -52,6 +52,7 @@ export default function CreativeHubPage() {
   });
 
   const [date, setDate] = useState(null);
+  const [selectedScheduleDate, setSelectedScheduleDate] = useState(null);
   const [operatingHours, setOperatingHours] = useState({ start: 0, end: 0 });
   const [bookedRanges, setBookedRanges] = useState([]);
   const [availableIntervals, setAvailableIntervals] = useState([]);
@@ -60,6 +61,8 @@ export default function CreativeHubPage() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [fullyBooked, setFullyBooked] = useState(false);
+  const [scheduleData, setScheduleData] = useState([]);
+  const [scheduleLoading, setScheduleLoading] = useState(false);
 
   // Update formData when date changes
   useEffect(() => {
@@ -74,6 +77,42 @@ export default function CreativeHubPage() {
       fetchAvailability(formData.date, formData.room);
     }
   }, [formData.date, formData.room]);
+
+  // Fetch schedule data when schedule date changes
+  useEffect(() => {
+    if (selectedScheduleDate) {
+      const formattedDate = format(selectedScheduleDate, "yyyy-MM-dd");
+      console.log("Fetching schedule for date:", formattedDate);
+      fetchScheduleData(formattedDate);
+    }
+  }, [selectedScheduleDate]);
+
+  async function fetchScheduleData(date) {
+    try {
+      setScheduleLoading(true);
+      console.log(`Fetching schedule data for ${date}`);
+      const res = await fetch(`/api/schedule?date=${date}`);
+      
+      if (!res.ok) {
+        throw new Error(`HTTP error ${res.status}`);
+      }
+      
+      const data = await res.json();
+      console.log("Schedule data response:", data);
+      
+      if (data.success) {
+        setScheduleData(data.bookings);
+      } else {
+        console.error("API returned error:", data.message);
+        setScheduleData([]);
+      }
+    } catch (error) {
+      console.error("Error fetching schedule data:", error);
+      setScheduleData([]);
+    } finally {
+      setScheduleLoading(false);
+    }
+  }
 
   async function fetchAvailability(date, room) {
     try {
@@ -173,6 +212,15 @@ export default function CreativeHubPage() {
     }
   };
 
+  // Group schedule data by room
+  const scheduleByRoom = scheduleData.reduce((acc, booking) => {
+    if (!acc[booking.room]) {
+      acc[booking.room] = [];
+    }
+    acc[booking.room].push(booking);
+    return acc;
+  }, {});
+
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <div className="container max-w-xl mx-auto px-6 py-12 bg-white shadow-md rounded-md">
@@ -185,8 +233,9 @@ export default function CreativeHubPage() {
           />
         </div>
         <Tabs defaultValue="profil" className="w-full flex flex-col mx-auto">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="profil">Profil</TabsTrigger>
+            <TabsTrigger value="jadwal">Jadwal</TabsTrigger>
             <TabsTrigger value="booking">Booking</TabsTrigger>
           </TabsList>
 
@@ -247,6 +296,99 @@ export default function CreativeHubPage() {
                   </ul>
                 </div>
               </CardFooter>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="jadwal">
+            <Card>
+              <CardHeader>
+                <CardTitle className="-ml-2">Jadwal Ruangan</CardTitle>
+                <CardDescription className="-ml-2">
+                  Lihat jadwal penggunaan ruangan
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="mx-2">
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="scheduleDate">Pilih Tanggal</Label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          id="scheduleDate"
+                          variant="outline"
+                          className={cn(
+                            "w-full justify-start text-left font-normal",
+                            !selectedScheduleDate && "text-muted-foreground"
+                          )}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {selectedScheduleDate ? (
+                            format(selectedScheduleDate, "PPP")
+                          ) : (
+                            <span>Pilih Tanggal</span>
+                          )}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0">
+                        <Calendar
+                          mode="single"
+                          selected={selectedScheduleDate}
+                          onSelect={setSelectedScheduleDate}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+
+                  {scheduleLoading ? (
+                    <div className="flex justify-center py-8">
+                      <p>Memuat jadwal...</p>
+                    </div>
+                  ) : selectedScheduleDate ? (
+                    Object.keys(scheduleByRoom).length > 0 ? (
+                      <div className="space-y-6">
+                        {Object.keys(scheduleByRoom).map((room) => (
+                          <div key={room} className="space-y-2">
+                            <h3 className="text-md font-semibold">{room}</h3>
+                            <div className="bg-gray-50 rounded-md p-3">
+                              {scheduleByRoom[room].map((booking, idx) => (
+                                <div
+                                  key={idx}
+                                  className="py-2 border-b last:border-b-0"
+                                >
+                                  <div className="flex justify-between items-center">
+                                    <div className="text-sm font-medium">
+                                      {booking.startTime} - {booking.endTime}
+                                    </div>
+                                    <div className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                                      {booking.name}
+                                    </div>
+                                  </div>
+                                  <div className="text-xs text-gray-500 mt-1">
+                                    {booking.purpose}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-center py-8">
+                        <p className="text-gray-500">
+                          Tidak ada booking untuk tanggal ini
+                        </p>
+                      </div>
+                    )
+                  ) : (
+                    <div className="text-center py-8">
+                      <p className="text-gray-500">
+                        Pilih tanggal untuk melihat jadwal
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
             </Card>
           </TabsContent>
 
