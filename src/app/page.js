@@ -64,6 +64,9 @@ export default function CreativeHubPage() {
   const [scheduleData, setScheduleData] = useState([]);
   const [scheduleLoading, setScheduleLoading] = useState(false);
 
+  // Set current date for restricting past dates
+  const currentDate = new Date();
+
   // Update formData when date changes
   useEffect(() => {
     if (date) {
@@ -92,14 +95,14 @@ export default function CreativeHubPage() {
       setScheduleLoading(true);
       console.log(`Fetching schedule data for ${date}`);
       const res = await fetch(`/api/schedule?date=${date}`);
-      
+
       if (!res.ok) {
         throw new Error(`HTTP error ${res.status}`);
       }
-      
+
       const data = await res.json();
       console.log("Schedule data response:", data);
-      
+
       if (data.success) {
         setScheduleData(data.bookings);
       } else {
@@ -202,7 +205,8 @@ export default function CreativeHubPage() {
         alert(
           "Booking berhasil! Informasi persetujuan akan dikirim via email."
         );
-        window.location.href = "https://wa.me/6288238644750?text=Saya%20sudah%20mengisi%20form%20booking%20ruangan.";
+        window.location.href =
+          "https://wa.me/6288238644750?text=Saya%20sudah%20mengisi%20form%20booking%20ruangan.";
       }
     } catch (error) {
       console.error("Error submitting booking:", error);
@@ -286,7 +290,7 @@ export default function CreativeHubPage() {
                   </CarouselContent>
                 </Carousel>
               </CardContent>
-              <CardFooter>
+              <CardFooter className="flex flex-col items-start">
                 <div>
                   <h3 className="text-base font-semibold">Jam Operasional</h3>
                   <ul className="list-disc text-sm pl-4">
@@ -294,6 +298,19 @@ export default function CreativeHubPage() {
                     <li>Sabtu: 09.00 - 12.00</li>
                     <li>Minggu & Hari Libur: Tutup</li>
                   </ul>
+                </div>
+                {/* Running Text */}
+                <div className="w-full mt-4">
+                  <marquee
+                    behavior="scroll"
+                    direction="left"
+                    scrollamount="6"
+                    className="text-sm text-red-600 bg-red-100 p-2 rounded-md"
+                  >
+                    Catatan: 1. Meninggalkan ruangan dalam keadaan rapih. 2.
+                    Tidak meninggalkan sampah. 3. Kirim dokumentasi kegiatan
+                    minimal satu.
+                  </marquee>
                 </div>
               </CardFooter>
             </Card>
@@ -334,6 +351,7 @@ export default function CreativeHubPage() {
                           mode="single"
                           selected={selectedScheduleDate}
                           onSelect={setSelectedScheduleDate}
+                          fromDate={currentDate} // Restrict past dates
                           initialFocus
                         />
                       </PopoverContent>
@@ -498,6 +516,7 @@ export default function CreativeHubPage() {
                               mode="single"
                               selected={date}
                               onSelect={setDate}
+                              fromDate={currentDate} // Restrict past dates
                               initialFocus
                             />
                           </PopoverContent>
