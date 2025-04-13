@@ -292,11 +292,11 @@ export default function CreativeHubPage() {
               </CardContent>
               <CardFooter className="flex flex-col items-start">
                 <div>
-                  <h3 className="text-base font-semibold">Jam Operasional</h3>
-                  <ul className="list-disc text-sm pl-4">
-                    <li>Senin - Jumat: 09.00 - 16.00</li>
-                    <li>Sabtu: 09.00 - 12.00</li>
-                    <li>Minggu & Hari Libur: Tutup</li>
+                  <h3 className="text-sm font-semibold">Catatan:</h3>
+                  <ul className="list-disc text-xs pl-4">
+                    <li>Tidak meninggalkan sampah.</li>
+                    <li>Kirim dokumentasi kegiatan minimal satu.</li>
+                    <li>Meninggalkan ruangan dalam keadaan rapih.</li>
                   </ul>
                 </div>
                 {/* Running Text */}
@@ -305,11 +305,8 @@ export default function CreativeHubPage() {
                     behavior="scroll"
                     direction="left"
                     scrollamount="6"
-                    className="text-sm text-red-600 bg-red-100 p-2 rounded-md"
-                  >
-                    Catatan: 1. Meninggalkan ruangan dalam keadaan rapih. 2.
-                    Tidak meninggalkan sampah. 3. Kirim dokumentasi kegiatan
-                    minimal satu.
+                    className="text-sm text-blue-600 bg-blue-100 p-2 rounded-md"
+                  > Senin - Jumat: 09.00 - 16.00 | Sabtu: 09.00 - 12.00 | Minggu & Hari Libur: Tutup
                   </marquee>
                 </div>
               </CardFooter>
