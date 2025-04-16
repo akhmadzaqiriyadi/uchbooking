@@ -294,6 +294,7 @@ export default function CreativeHubPage() {
                 <div>
                   <h3 className="text-sm font-semibold">Catatan:</h3>
                   <ul className="list-disc text-xs pl-4">
+                    <li>Booking dilakukan minimal H-1.</li>
                     <li>Tidak meninggalkan sampah.</li>
                     <li>Kirim dokumentasi kegiatan minimal satu.</li>
                     <li>Meninggalkan ruangan dalam keadaan rapih.</li>
