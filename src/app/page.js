@@ -447,7 +447,7 @@ export default function CreativeHubPage() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="npm">NPM</Label>
+                        <Label htmlFor="npm">NPM/NIK/NIDN</Label>
                         <Input
                           id="npm"
                           type="text"
