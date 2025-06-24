@@ -530,9 +530,9 @@ export default function CreativeHubPage() {
                             <SelectItem value="Think Tank Room">
                               Think Tank Room
                             </SelectItem>
-                            <SelectItem value="Prototyping Room">
+                            {/* <SelectItem value="Prototyping Room">
                               Prototyping Room
-                            </SelectItem>
+                            </SelectItem> */}
                             <SelectItem value="Coworking Space">
                               Coworking Space
                             </SelectItem>
